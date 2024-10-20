@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from pwd_generator import generate_password
+import pyperclip
 
 
 def get_password():
@@ -8,6 +9,7 @@ def get_password():
     pwd_entry.delete(0, END)
     pwd = generate_password()
     pwd_entry.insert(0, pwd)
+    pyperclip.copy(pwd)
 
 
 def add_entry():
@@ -31,6 +33,7 @@ def add_entry():
                 f.write(f'{website} | {email} | {password}\n')
             
             website_entry.delete(0, END)
+            user_entry.delete(0, END)
             pwd_entry.delete(0, END)
 
 
@@ -58,7 +61,6 @@ website_entry.focus()
 
 user_entry = Entry()
 user_entry.grid(column=1, row=2, columnspan=2, sticky="EW")
-user_entry.insert(0, "steve_bauer61@hotmail.com")
 
 pwd_entry = Entry()
 pwd_entry.grid(column=1, row=3, sticky="EW")
