@@ -5,6 +5,7 @@ from pwd_generator import generate_password
 
 def get_password():
     '''Generate a random password and input to the password entry box'''
+    pwd_entry.delete(0, END)
     pwd = generate_password()
     pwd_entry.insert(0, pwd)
 
