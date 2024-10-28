@@ -58,6 +58,33 @@ def add_entry():
                 pwd_entry.delete(0, END)
 
 
+def find_entry():
+    '''
+    Search data.json to see if record exists for website being searched.
+    If it exists, return the email and password being used for that website.
+    '''
+    website = website_entry.get()
+
+    try:
+        # read the file if it exists
+        with open("data.json") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        messagebox.showwarning(title="Warning", message="There are no entries yet. Please add record.")
+    else:
+        if website in data:
+            # display the email and password associated with the website
+            email = data[website]["email"]
+            password = data[website]["password"]
+            messagebox.showinfo(title=website, message=f"Email: {email}\nPassword: {password}")
+            # copy the password to the clipboard and clear the entry form
+            pyperclip.copy(password)
+            website_entry.delete(0, END)
+        else:
+            # website not found
+            messagebox.showwarning(title="Warning", message="There are no entries for this website")
+
+
 # UI setup
 # set up screen
 window = Tk()
@@ -77,7 +104,7 @@ pwd_label = Label(text="Password:").grid(column=0, row=3, sticky="E")
 
 # create text entry fields
 website_entry = Entry()
-website_entry.grid(column=1, row=1, columnspan=2, sticky="EW")
+website_entry.grid(column=1, row=1, sticky="EW")
 website_entry.focus()
 
 user_entry = Entry()
@@ -92,5 +119,8 @@ generate_button.grid(column=2, row=3, sticky="EW")
 
 add_button = Button(text="Add", width=35, command=add_entry)
 add_button.grid(column=1, row=4, columnspan=2, sticky="EW")
+
+search_button = Button(text="Search", command=find_entry)
+search_button.grid(column=2, row=1, sticky="EW")
 
 window.mainloop()
