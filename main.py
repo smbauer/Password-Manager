@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from pwd_generator import generate_password
 import pyperclip
+import json
 
 
 def get_password():
@@ -13,11 +14,18 @@ def get_password():
 
 
 def add_entry():
-    '''Validate entries and add record to data.txt if confirmed'''
+    '''Validate entries and add record to data.json if confirmed'''
     website = website_entry.get()
     email = user_entry.get()
     password = pwd_entry.get()
+    new_data = {
+        website: {
+            "email": email,
+            "password": password
+        }
+    }
 
+    # validate that none of the entry fields are empty
     if len(website) == 0 or len(email) == 0 or len(password) == 0:
         if len(website) == 0:
             messagebox.showwarning(title="Warning", message="Please enter a website")
@@ -29,12 +37,25 @@ def add_entry():
         is_confirmed = messagebox.askokcancel(title=website, message=f'Accept password for {website}?')
 
         if is_confirmed:
-            with open("data.txt", 'a') as f:
-                f.write(f'{website} | {email} | {password}\n')
-            
-            website_entry.delete(0, END)
-            user_entry.delete(0, END)
-            pwd_entry.delete(0, END)
+            try:
+                # read data if file exists
+                with open("data.json", "r") as f:
+                    data = json.load(f)
+            except FileNotFoundError:
+                # otherwise create new file and add data
+                with open("data.json", "w") as f:
+                    json.dump(new_data, f, indent=4)
+            else:
+                data.update(new_data)
+
+                with open("data.json", "w") as f:
+                    # write the updated data
+                    json.dump(data, f, indent=4)
+            finally:
+                # clear the entry forms for the next entry
+                website_entry.delete(0, END)
+                user_entry.delete(0, END)
+                pwd_entry.delete(0, END)
 
 
 # UI setup
